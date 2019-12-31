@@ -1,8 +1,9 @@
 var express = require('express')
 var port = 3000;
+var result = ``;
 var app = express();
+const puppeteer = require('puppeteer');
 
-app.use(express.static('public'))
 app.get('/', (req, res) => {
     res.send(`<!DOCTYPE html>
 <html lang="en">
@@ -23,24 +24,54 @@ app.get('/', (req, res) => {
 })
 
 app.get('/search', (req, res) => {
-    bookName = req.query.bookName;
-    console.log(bookName)
-    
-    const puppeteer = require('puppeteer');
-    (async(bookName) => {
-      const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
 
-      const page = await browser.newPage();
-      await page.goto('https://www.millie.co.kr/v3/search/result/' + bookName + '?toapp=stop&type=all');
-      await page.keyboard.press('Enter');
-      
-      await page.screenshot()
-    })
-    
-    
-    res.send()
+    bookName = req.query.bookName;
+    console.log("Typed, ", bookName);
+
+    result = (async() => {
+        const browser = await puppeteer.launch({headless: false})
+        const page = await browser.newPage();
+        await page.goto(`https://www.millie.co.kr/v3/search/result/${bookName}?toapp=stop&type=all`);
+        await page
+            .keyboard
+            .press(String.fromCharCode(13))
+
+        const titles = await page.evaluate(() => document.querySelector('span.title').textContent)
+        console.log(`book detected ${titles}`)
+        // await page.pdf({path: 'test.pdf', format: 'A4'})
+        switch (titles) {
+            case bookName:
+                result = `[Success] '${bookName}' found`;
+                console.log(result);
+
+                res.send(`<h1>Result</h1>
+                <p>${result}</p>
+            <script> const goBack = () =>{ window.history.back();}</script>
+            <Button onClick='goBack()'>Back</Button`);
+
+                return result;
+
+            default:
+                result = `No, Sorry, we cannot found '${bookName}'`;
+                console.log(result);
+
+                res.send(`<h1>Result</h1>
+                <p>${result}</p>
+            <script> const goBack = () =>{ window.history.back();}</script>
+            <Button onClick='goBack()'>Back</Button`);
+
+                return result;
+        }
+
+    })().catch(err => {
+        console.log(err)
+    });
+
 })
 
+// const textContent = await page.evaluate(() => document.querySelector(''))
+// const innerText = await page.evaluate(() => document.querySelector(''))
+
 app.listen(port, () => {
-    console.log(`Port ${port} opened!`)
+    console.log(`[Server Start] Port ${port} opened!`)
 })
