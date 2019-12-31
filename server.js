@@ -1,77 +1,48 @@
-var express = require('express')
+var React = require(`react`);
+
+var Home = require(`./pages/index.js`);
+var express = require('express');
+var {renderToString} = require(`react-dom/server`);
+var router = express.Router();
+var path = require('path');
 var port = 3000;
-var result = ``;
 var app = express();
-const puppeteer = require('puppeteer');
+const millieCrawler = require(`./crawler/millie`);
+
+app.use(express.static(path.join(__dirname, `html`)));
+
+app.use((req, res, next) => {
+    console.log('Time:', Date.now());
+    next();
+});
 
 app.get('/', (req, res) => {
-    res.send(`<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Simple E-Book crawler</title>
-    </head>
-    <body>
-        <h1>Simple E-Book crawler</h1>
-        <form action="/search" method="GET">
-            <input type="text" name="bookName" placeholder="Search your Book!" required>
-            <button type="submit" >Find</button>
-        </form>
-    </body>
-</html>`)
+    res.sendFile(path.join(__dirname, `html`, `index.html`))
 })
+
 
 app.get('/search', (req, res) => {
 
-    bookName = req.query.bookName;
-    console.log("Typed, ", bookName);
+    const bookName = req.query.bookName;
+    console.log(bookName);
 
-    result = (async() => {
-        const browser = await puppeteer.launch({headless: false})
-        const page = await browser.newPage();
-        await page.goto(`https://www.millie.co.kr/v3/search/result/${bookName}?toapp=stop&type=all`);
-        await page
-            .keyboard
-            .press(String.fromCharCode(13))
+    millieCrawler
+        .millieCrawler(bookName)
+        .then(resolve => {
+            console.log(resolve);
 
-        const titles = await page.evaluate(() => document.querySelector('span.title').textContent)
-        console.log(`book detected ${titles}`)
-        // await page.pdf({path: 'test.pdf', format: 'A4'})
-        switch (titles) {
-            case bookName:
-                result = `[Success] '${bookName}' found`;
-                console.log(result);
+            renderToString
+            res.send(renderToString(Home))
+            // res.send(path.join(__dirname, `pages`, `index.js`));
 
-                res.send(`<h1>Result</h1>
-                <p>${result}</p>
-            <script> const goBack = () =>{ window.history.back();}</script>
-            <Button onClick='goBack()'>Back</Button`);
+        })
+        .catch(reject => {
+            alert(`${reject} No books we found, will go to home.`);
+            res.sendFile(path.join(__dirname, `html`, `index.html`));
+        });
 
-                return result;
-
-            default:
-                result = `No, Sorry, we cannot found '${bookName}'`;
-                console.log(result);
-
-                res.send(`<h1>Result</h1>
-                <p>${result}</p>
-            <script> const goBack = () =>{ window.history.back();}</script>
-            <Button onClick='goBack()'>Back</Button`);
-
-                return result;
-        }
-
-    })().catch(err => {
-        console.log(err)
-    });
-
-})
-
-// const textContent = await page.evaluate(() => document.querySelector(''))
-// const innerText = await page.evaluate(() => document.querySelector(''))
+});
 
 app.listen(port, () => {
-    console.log(`[Server Start] Port ${port} opened!`)
+    console.log(`\n[Server Start] Port ${port} opened!`)
 })
