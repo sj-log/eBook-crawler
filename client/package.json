@@ -17,10 +17,9 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "client": "npm start client",
-        "dev": "concurrently --kill-others \"npm run server\" \"npm run client\"",
-        "push": "git add . \n git commit -m \n git push origin master"
+        "dev": "concurrently  \"npm run server\" \"npm run client\""
     },
-    "proxy": "https://localhost:3000",
+
     "eslintConfig": {
         "extends": "react-app"
     },

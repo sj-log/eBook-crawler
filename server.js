@@ -1,25 +1,21 @@
-var React = require(`react`);
-
-var Home = require(`./pages/index.js`);
 var express = require('express');
-var {renderToString} = require(`react-dom/server`);
-var router = express.Router();
+const router = require('express').Router();
 var path = require('path');
-var port = 3000;
+var port = 5000;
 var app = express();
 const millieCrawler = require(`./crawler/millie`);
 
-app.use(express.static(path.join(__dirname, `html`)));
+app.use(express.static(path.join(__dirname, `client/src`)));
 
 app.use((req, res, next) => {
     console.log('Time:', Date.now());
     next();
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, `html`, `index.html`))
-})
 
+app.get('/', (req,res)=>{
+    res.sendFile(path.join(__dirname +'/client/public/index.html'))
+})
 
 app.get('/search', (req, res) => {
 
@@ -31,9 +27,7 @@ app.get('/search', (req, res) => {
         .then(resolve => {
             console.log(resolve);
 
-            renderToString
-            res.send(renderToString(Home))
-            // res.send(path.join(__dirname, `pages`, `index.js`));
+            res.json(resolve);
 
         })
         .catch(reject => {

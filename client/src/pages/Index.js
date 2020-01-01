@@ -1,7 +1,7 @@
 import React from 'react';
-import './customers.css';
 
-class Customers extends React.Component {
+
+export default class Index extends React.Component {
     constructor(props) {
         super(props)
 
@@ -35,4 +35,4 @@ class Customers extends React.Component {
     }
 }
 
-export default Customers;
+

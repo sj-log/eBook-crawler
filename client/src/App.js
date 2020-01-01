@@ -1,14 +1,14 @@
 import React from 'react';
-import './App.css';
-import Customers from './customers/customers'
+import {Route, Switch } from 'react-router-dom';
+import Index from './pages/Index.js'
 
-function App() {
+
+export default function App() {
     return (
-        <div className="App">
-
-            <Customers></Customers>
-        </div>
+        <Switch>
+            <Route path="/"  component={Index}/>
+            {/* <Route path="/search" component={Result}/> */}
+        </Switch>
     );
 }
 
-export default App;
