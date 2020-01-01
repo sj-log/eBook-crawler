@@ -1,6 +1,6 @@
 # eBook-crawler
 
-NodeJs(Express) + ReactJs(Create-react-app)
+NodeJs(Express) + ReactJs(Create-react-app) + Puppeteer headless
 
 # Purpose
 
