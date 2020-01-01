@@ -8,6 +8,7 @@
         "@testing-library/user-event": "^7.1.2",
         "react": "^16.12.0",
         "react-dom": "^16.12.0",
+        "react-router-dom": "^5.1.2",
         "react-scripts": "3.3.0"
     },
     "scripts": {
@@ -19,15 +20,20 @@
         "client": "npm start client",
         "dev": "concurrently  \"npm run server\" \"npm run client\""
     },
-
     "eslintConfig": {
         "extends": "react-app"
     },
     "browserslist": {
         "production": [
-            ">0.2%", "not dead", "not op_mini all"
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
         ],
-        "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
     },
     "devDependencies": {
         "concurrently": "^5.0.2"

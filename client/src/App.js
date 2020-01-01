@@ -1,14 +1,16 @@
 import React from 'react';
-import {Route, Switch } from 'react-router-dom';
-import Index from './pages/Index.js'
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+import Home from './components/Home';
 
 
-export default function App() {
+
+const App = () => {
     return (
-        <Switch>
-            <Route path="/"  component={Index}/>
-            {/* <Route path="/search" component={Result}/> */}
-        </Switch>
+        <Router>
+            <Route path="/" exact component={Home}/>
+        </Router>
+
     );
 }
 
+export default App;

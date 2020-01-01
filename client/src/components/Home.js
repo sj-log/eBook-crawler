@@ -1,7 +1,8 @@
 import React from 'react';
+import io from 'socket.io-client';
 
-
-export default class Index extends React.Component {
+export default class Home
+extends React.Component {
     constructor(props) {
         super(props)
 
@@ -10,7 +11,9 @@ export default class Index extends React.Component {
         }
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+
+    }
 
     handleSearch() {
         const books = fetch(`/search`)
@@ -34,5 +37,3 @@ export default class Index extends React.Component {
         )
     }
 }
-
-
