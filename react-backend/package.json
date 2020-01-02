@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "server": "nodemon node ./bin/www",
-    "client" : "cd client && npm run start",
+    "client": "cd client && npm run start",
     "dev": "concurrently \"npm run server\" \"npm run client\" "
   },
   "dependencies": {

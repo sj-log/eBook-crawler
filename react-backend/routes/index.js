@@ -9,13 +9,12 @@ router.get('/', function (req, res) {
 });
 
 router.get('/search', (req, res, next) => {
-
-    const bookName = req.query.bookName;
-    console.log(`[Client Look up] ${bookName}`);
+    const inputBookName = req.query.inputBookName;
+    console.log(`[Server got Bookname] ${inputBookName}`);
 
     (async() => {
-        const books = await millieCrawler.millieCrawler(bookName);
-        console.log(`[Crawler found] ${books}`);
+        const books = await millieCrawler.millieCrawler(inputBookName);
+        console.log(`[Fetched Books] ${books}`);
         
    
         res.json(books);

@@ -15,8 +15,13 @@ module.exports = {
         }, selector)
 
         var result = titlesSelect
-        console.log(`${result} in millie.js`)
+      
         return result
 
     }
 }
+
+
+// how to receive the data from view?
+
+
