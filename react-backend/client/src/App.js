@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios'
+import React, {Fragment} from 'react';
+import axios from 'axios';
 import './App.css';
+import {Layout, Card,Form,Row,Col, Icon, Button, Input} from 'antd';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -20,7 +21,8 @@ export default class App extends React.Component {
 
         this.state = {
             inputBookName: '',
-            books: []
+            books: [],
+            loading: false
         }
 
     }
@@ -31,8 +33,8 @@ export default class App extends React.Component {
     }
 
     async onSubmit(e) {
-        e.preventDefault();
-        const {inputBookName, books} = this.state;
+        // e.preventDefault();
+        const {inputBookName} = this.state;
         console.log(inputBookName);
 
         await axios
@@ -45,17 +47,31 @@ export default class App extends React.Component {
     }
 
     showMilliBooks() {
-        const {books} = this.state;
+        const {books, loading} = this.state;
+
+        console.log(books);
         if (books.length > 0) {
             return (
-                <ul>
-                    {books.map((book, i) => <li key={i}>
-                        <h6>
-                            {book}
-                        </h6>
-                    </li>)
+                <Layout.Content>
+                    <Layout.Header style={{backgroundColor:"#ffffff"}}>밀리의 서재 총 {books.length}</Layout.Header>
+                   <Layout.Content>
+                    <Row > 
+                        {books.map((book, i) =>
+                        
+                        <a className="millie_book_link" href={book.url}>
+                          <Col xs={6} >
+                            <Card bordered  hoverable key={i} cover={   <img className="millie_book_img"  src={book.img}/>}>
+                                                     
+                                <Card.Meta title={book.title}/>
+                                    
+                            </Card>
+                            </Col>
+                            </a>
+                        )
 }
-                </ul>
+                    </Row>
+                    </Layout.Content>
+                </Layout.Content>
             )
         }
     }
@@ -63,24 +79,28 @@ export default class App extends React.Component {
     render() {
 
         return (
-            <div className="App">
-                <h1>Book List</h1>
-                <p>this is the page for crawling the all Korean eBook, from major eBook stores
-                    in S.Korea</p>
-                <form onSubmit={this.onSubmit}>
+            <Layout style={{textAlign:'center',backgroundColor:"#FFFFFF"}}className="App">
+           
+                    <h1>
+                        Book List</h1>
+                    <p>this is the page for crawling the all Korean eBook, from major eBook stores
+                        in S.Korea</p>
+               
+                <Form layout='inline'>
+                    <Form.Item>
+                        <Input.Search
+                            prefix={< Icon type = "book" />}
+                            onSearch={this.onSubmit}
+                            placeholder="Search Book Name"
+                            enterButton
+                            onChange={this.onChange}
+                            name="inputBookName"></Input.Search>
+                    </Form.Item>
+                 
+                </Form>
 
-                    <input
-                        placeholder="Search Book Name"
-                        onChange={this.onChange}
-                        name="inputBookName"></input>
-
-                    <button type="submit">Search</button>
-
-                </form>
-
-                <h1>Result</h1>
                 {this.showMilliBooks()}
-            </div>
+            </Layout>
         );
     }
 

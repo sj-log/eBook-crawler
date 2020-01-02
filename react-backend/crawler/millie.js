@@ -5,6 +5,7 @@ module.exports = {
         const browser = await puppeteer.launch({headless: true})
         const page = await browser.newPage();
         await page.goto(`https://www.millie.co.kr/v3/search/result/${bookName}?toapp=stop&type=all&category=1`);
+
         const titlesProc = await page.evaluate(() => {
             var titles = Array.from(document.querySelectorAll(`#wrap > section > div > section.search-list > div > ul > li > a > div.body > span.title`));
             var returnTitles = titles
@@ -32,22 +33,21 @@ module.exports = {
             return returnImgs;
         },)
 
-        // for (var i = 0; i <= imgProc.length; i++) {
-        //     const bookInfo = [];
-            
-        //     bookInfo[i] = 
-        //     [{
-        //         title: titlesProc[i],
-        //         url: urlProc[i],
-        //         img: imgProc[i]
-        //     }]
-        //     return bookInfo;
-        // }
+        // proc to put all info into an array
+        const bookInfo = [];
+        for (var i = 0; i < imgProc.length; i++) {
 
-        console.log(titlesProc, urlProc, imgProc);
-        // console.log(titlesProc, urlProc, imgProc);
+            bookInfo[i] = {
+                title: titlesProc[i],
+                url: urlProc[i],
+                img: imgProc[i]
+            }
 
-        var result = titlesProc;
+        }
+
+        console.log(bookInfo);
+
+        var result = bookInfo;
 
         return result
 
