@@ -16,6 +16,7 @@ router.get('/search', (req, res, next) => {
         const books = await millieCrawler.millieCrawler(inputBookName);
         console.log(`[Fetched Books] ${books}`);
         
+        
    
         res.json(books);
 
