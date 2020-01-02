@@ -15,6 +15,16 @@ module.exports = {
             return returnTitles;
         },)
 
+        const writerProc = await page.evaluate(() => {
+            var writers = Array.from(document.querySelectorAll("#wrap > section > div > section.search-list > div > ul > li> a > div.body > div " +
+                    "> span"));
+            var returnWriters = writers
+                .map(writer => writer.textContent)
+                .slice(0, writers.length);
+
+            return returnWriters;
+        },)
+
         const urlProc = await page.evaluate(() => {
             var urls = Array.from(document.querySelectorAll(`#wrap > section > div > section.search-list > div > ul > li > a`));
             var returnUrls = urls
@@ -39,6 +49,7 @@ module.exports = {
 
             bookInfo[i] = {
                 title: titlesProc[i],
+                writer: writerProc[i],
                 url: urlProc[i],
                 img: imgProc[i]
             }
