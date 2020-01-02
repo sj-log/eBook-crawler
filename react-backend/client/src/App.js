@@ -73,6 +73,7 @@ export default class App extends React.Component {
                             <Card.Grid >
                                 <img
                                     style={{
+                                        
                                     height: "20rem",
                                     padding:"1rem"
                                 }}

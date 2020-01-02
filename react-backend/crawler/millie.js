@@ -1,25 +1,27 @@
-const puppeteer = require('puppeteer');
 
 module.exports = {
-    millieCrawler: async function (bookName) {
-        const browser = await puppeteer.launch({headless: true})
+    millieCrawler: async function (bookName, browser) {
         const page = await browser.newPage();
         await page.goto(`https://www.millie.co.kr/v3/search/result/${bookName}?toapp=stop&type=all&category=1`);
+        await page.on("console",msg=>{
+            `[LOG]`, msg.text();
+        })
 
-        const titlesProc = await page.evaluate(() => {
-            var titles = Array.from(document.querySelectorAll(`#wrap > section > div > section.search-list > div > ul > li > a > div.body > span.title`));
+        const titleSelector = `#wrap > section > div > section.search-list > div > ul > li > a > div.body > span.title`;
+        const titlesProc = await page.evaluate((titleSelector) => {
+            var titles = Array.from(document.querySelectorAll(titleSelector));
             var returnTitles = titles
                 .map(title => title.textContent)
                 .slice(0, titles.length);
 
             return returnTitles;
-        },)
+        },titleSelector)
 
         const writerProc = await page.evaluate(() => {
             var writers = Array.from(document.querySelectorAll("#wrap > section > div > section.search-list > div > ul > li> a > div.body > div " +
                     "> span"));
             var returnWriters = writers
-                .map(writer => writer.textContent)
+                .map(writer => writer.textContent.substr(0,15))
                 .slice(0, writers.length);
 
             return returnWriters;
@@ -42,12 +44,12 @@ module.exports = {
 
             return returnImgs;
         },)
-
+ 
         // proc to put all info into an array
-        const bookInfo = [];
-        for (var i = 0; i < imgProc.length; i++) {
+        const millieBookInfo = [];
+        for (var i = 0; i < titlesProc.length; i++) {
 
-            bookInfo[i] = {
+            millieBookInfo[i] = {
                 title: titlesProc[i],
                 writer: writerProc[i],
                 url: urlProc[i],
@@ -56,11 +58,9 @@ module.exports = {
 
         }
 
-        console.log(bookInfo);
+        console.log(`[Millie] ${millieBookInfo}`);
 
-        var result = bookInfo;
-
-        return result
+        return millieBookInfo;
 
     }
 }
