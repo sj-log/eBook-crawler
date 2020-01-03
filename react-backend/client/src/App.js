@@ -31,11 +31,15 @@ export default class App extends React.Component {
             .showRidiBooks
             .bind(this);
 
+        this.showYesBooks = this
+            .showYesBooks
+            .bind(this);
         this.state = {
             inputBookName: '',
             ridiBooks: [],
             millieBooks: [],
-            isLoading: false,
+            yesBooks: [],
+            isLoading: false
         }
 
     }
@@ -45,14 +49,14 @@ export default class App extends React.Component {
         console.log(this.state);
     }
 
-    async onSubmit(e) {
+    async onSubmit() {
         const {inputBookName} = this.state;
         console.log(inputBookName);
 
         await axios
             .get(`/search?inputBookName=${inputBookName}`)
-            .then(res => res.data, this.setState({isLoading:true}))
-            .then(books => this.setState({isLoading:false, ridiBooks: books.ridiBooks, millieBooks: books.millieBooks}));
+            .then(res => res.data, this.setState({isLoading: true}))
+            .then(books => this.setState({isLoading: false, ridiBooks: books.ridiBooks, millieBooks: books.millieBooks, yesBooks: books.yesBooks}));
 
         console.log(this.state);
 
@@ -129,6 +133,41 @@ export default class App extends React.Component {
         }
 
     }
+    showYesBooks() {
+        const {yesBooks} = this.state;
+
+        if (yesBooks.length > 0) {
+
+            return (
+                <Layout.Content>
+                    <PageHeader
+                        title="예스24북클럽"
+                        subTitle={yesBooks.length + "권"}
+                        style={{
+                        backgroundColor: "#ffffff"
+                    }}></PageHeader>
+                    <Card type="flex">
+                        {yesBooks.map((book, i) => <a key={i} className="yes_book_link" href={book.url}>
+
+                            <Card.Grid >
+                                <img
+                                    alt={`thumbnail ${book.title}`}
+                                    style={{
+                                    height: "20rem",
+                                    padding: "1rem"
+                                }}
+                                    src={book.img}
+                                    className="yes_book_img"/>
+                                <Card.Meta title={book.title} description={book.writer}/>
+
+                            </Card.Grid>
+                        </a>)
+}
+                    </Card>
+                </Layout.Content>
+            )
+        }
+    }
     render() {
 
         return (
@@ -162,23 +201,27 @@ export default class App extends React.Component {
                 <Tabs defaultActiveKey="1">
                     <Tabs.TabPane
                         key="1"
-                        tab={< span > <img
-                        style={{
-                        width: 25,
-                        borderRadius: 5
-                    }}
-                        src="https://www.millie.co.kr/favicon/ios-icon.png"/></span>}>
+                        tab={< img alt = {
+                        `icon-millie`
+                    }
+                    style = {{ width: 25, borderRadius: 5 }}src = "https://www.millie.co.kr/favicon/ios-icon.png" />}>
                         {this.showMilliBooks()}
                     </Tabs.TabPane>
                     <Tabs.TabPane
                         key="2"
-                        tab={< span > <img
-                        style={{
-                        width: 25,
-                        borderRadius: 5
-                    }}
-                        src="https://books.ridicdn.net/static/favicon/favicon.ico"/> </span>}>
+                        tab={< img alt = {
+                        `icon-ridiBook`
+                    }
+                    style = {{ width: 25, borderRadius: 5 }}src = "https://books.ridicdn.net/static/favicon/favicon.ico" />}>
                         {this.showRidiBooks()}
+                    </Tabs.TabPane>
+                    <Tabs.TabPane
+                        key="3"
+                        tab={< img alt = {
+                        `icon-yesBookClub-24`
+                    }
+                    style = {{ width: 25, borderRadius: 5 }}src = "https://secimage.yes24.com/sysimage/renew/gnb/yes24.ico" />}>
+                        {this.showYesBooks()}
                     </Tabs.TabPane>
                 </Tabs>
 

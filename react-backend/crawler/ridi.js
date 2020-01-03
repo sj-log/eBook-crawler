@@ -1,7 +1,6 @@
 module.exports = {
 
     ridiCrawler: async function (page, inputBookName) {
-        // const browser = await puppeteer.launch({headless: true})
 
         await page.goto(`https://select.ridibooks.com/search?q=${inputBookName}&type=Books`);
 
@@ -69,7 +68,7 @@ module.exports = {
                         clearInterval(timer);
                         resolve();
                     }
-                }, 5);
+                }, 50);
             })
         })
 

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const millieCrawler = require('../crawler/millie');
 const ridiCrawler = require('../crawler/ridi');
+const yesCrawler = require('../crawler/yes');
 const {Cluster} = require('puppeteer-cluster');
 
 /* GET home page. */
@@ -19,12 +20,11 @@ router.get('/search', (req, res) => {
             concurrency: Cluster.CONCURRENCY_CONTEXT,
             maxConcurrency: 3,
             puppeteerOptions: {
-                headless: false
+                headless: true
             }
         });
 
         const millieCrawling = async({page, data: inputBookName}) => {
-
             return await millieCrawler.millieCrawler(page, inputBookName);
 
         };
@@ -32,11 +32,16 @@ router.get('/search', (req, res) => {
             return await ridiCrawler.ridiCrawler(page, inputBookName);
         };
 
+        const yesCrawling = async({page, data: inputBookName}) => {
+            return await yesCrawler.yesCrawler(page, inputBookName);
+        };
+
         const resultMillie = await cluster.execute(inputBookName, millieCrawling);
         const resultRidi = await cluster.execute(inputBookName, ridiCrawling);
+        const resultYes = await cluster.execute(inputBookName, yesCrawling);
 
-        res.json({ridiBooks: resultRidi, millieBooks: resultMillie});
-        
+        res.json({ridiBooks: resultRidi, millieBooks: resultMillie, yesBooks: resultYes});
+
         await cluster.idle();
         await cluster.close();
 
