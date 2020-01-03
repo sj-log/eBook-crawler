@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const millieCrawler = require('../crawler/millie');
 const ridiCrawler = require('../crawler/ridi');
+const {Cluster} = require('puppeteer-cluster');
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -9,24 +10,37 @@ router.get('/', function (req, res) {
 
 });
 
-router.get('/search', (req, res, next) => {
-    const inputBookName = req.query.inputBookName;
-    console.log(`[Request] ${inputBookName}`);
+router.get('/search', (req, res) => {
 
     (async() => {
-        const puppeteer = require('puppeteer');
-        const browser = await puppeteer.launch({headless: true})
+        const inputBookName = req.query.inputBookName;
+
+        const cluster = await Cluster.launch({
+            concurrency: Cluster.CONCURRENCY_CONTEXT,
+            maxConcurrency: 3,
+            puppeteerOptions: {
+                headless: false
+            }
+        });
+
+        const millieCrawling = async({page, data: inputBookName}) => {
+
+            return await millieCrawler.millieCrawler(page, inputBookName);
+
+        };
+        const ridiCrawling = async({page, data: inputBookName}) => {
+            return await ridiCrawler.ridiCrawler(page, inputBookName);
+        };
+
+        const resultMillie = await cluster.execute(inputBookName, millieCrawling);
+        const resultRidi = await cluster.execute(inputBookName, ridiCrawling);
+
+        res.json({ridiBooks: resultRidi, millieBooks: resultMillie});
         
+        await cluster.idle();
+        await cluster.close();
 
-        const millieBooks = await millieCrawler.millieCrawler(inputBookName, browser);
-
-        const ridiBooks = await ridiCrawler.ridiCrawler(inputBookName, browser);
-
-        console.log(`[Fetched] ${millieBooks, ridiBooks}`);
-        
-        res.json(millieBooks);
-
-    })();
+    })(req, res)
 
 })
 

@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import axios from 'axios';
 import './App.css';
 import {
@@ -27,10 +27,15 @@ export default class App extends React.Component {
             .showMilliBooks
             .bind(this);
 
+        this.showRidiBooks = this
+            .showRidiBooks
+            .bind(this);
+
         this.state = {
             inputBookName: '',
-            books: [],
-            loading: false
+            ridiBooks: [],
+            millieBooks: [],
+            isLoading: false,
         }
 
     }
@@ -46,36 +51,35 @@ export default class App extends React.Component {
 
         await axios
             .get(`/search?inputBookName=${inputBookName}`)
-            .then(res => res.data)
-            .then(books => this.setState({books: books}));
+            .then(res => res.data, this.setState({isLoading:true}))
+            .then(books => this.setState({isLoading:false, ridiBooks: books.ridiBooks, millieBooks: books.millieBooks}));
 
-        console.log(this.state.books);
+        console.log(this.state);
 
     }
 
     showMilliBooks() {
-        const {books, loading} = this.state;
-      
+        const {millieBooks} = this.state;
 
-        console.log(books);
-        if (books.length > 0) {
+        if (millieBooks.length > 0) {
+
             return (
                 <Layout.Content>
                     <PageHeader
                         title="밀리의 서재"
-                        subTitle={books.length + "권"}
+                        subTitle={millieBooks.length + "권"}
                         style={{
                         backgroundColor: "#ffffff"
                     }}></PageHeader>
                     <Card type="flex">
-                        {books.map((book, i) => <a key={i} className="millie_book_link" href={book.url}>
+                        {millieBooks.map((book, i) => <a key={i} className="millie_book_link" href={book.url}>
 
                             <Card.Grid >
                                 <img
+                                    alt={`thumbnail ${book.title}`}
                                     style={{
-                                        
                                     height: "20rem",
-                                    padding:"1rem"
+                                    padding: "1rem"
                                 }}
                                     src={book.img}
                                     className="millie_book_img"/>
@@ -89,7 +93,42 @@ export default class App extends React.Component {
             )
         }
     }
+    showRidiBooks() {
+        const {ridiBooks} = this.state;
 
+        if (ridiBooks.length > 0) {
+
+            return (
+                <Layout.Content>
+                    <PageHeader
+                        title="리디북스"
+                        subTitle={ridiBooks.length + "권"}
+                        style={{
+                        backgroundColor: "#ffffff"
+                    }}></PageHeader>
+                    <Card type="flex">
+                        {ridiBooks.map((book, i) => <a key={i} className="ridi_book_link" href={book.url}>
+
+                            <Card.Grid >
+                                <img
+                                    alt={`thumbnail ${book.title}`}
+                                    style={{
+                                    height: "20rem",
+                                    padding: "1rem"
+                                }}
+                                    src={book.img}
+                                    className="ridi_book_img"/>
+                                <Card.Meta title={book.title} description={book.writer}/>
+
+                            </Card.Grid>
+                        </a>)
+}
+                    </Card>
+                </Layout.Content>
+            )
+        }
+
+    }
     render() {
 
         return (
@@ -121,10 +160,26 @@ export default class App extends React.Component {
                 </PageHeader>
 
                 <Tabs defaultActiveKey="1">
-                    <Tabs.TabPane key="1" tab={<span><img style={{width:25,borderRadius:5}} src="https://www.millie.co.kr/favicon/ios-icon.png"/> Millie</span>}>
+                    <Tabs.TabPane
+                        key="1"
+                        tab={< span > <img
+                        style={{
+                        width: 25,
+                        borderRadius: 5
+                    }}
+                        src="https://www.millie.co.kr/favicon/ios-icon.png"/></span>}>
                         {this.showMilliBooks()}
                     </Tabs.TabPane>
-                    
+                    <Tabs.TabPane
+                        key="2"
+                        tab={< span > <img
+                        style={{
+                        width: 25,
+                        borderRadius: 5
+                    }}
+                        src="https://books.ridicdn.net/static/favicon/favicon.ico"/> </span>}>
+                        {this.showRidiBooks()}
+                    </Tabs.TabPane>
                 </Tabs>
 
             </Layout>
