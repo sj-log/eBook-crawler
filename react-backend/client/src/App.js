@@ -186,11 +186,12 @@ export default class App extends React.Component {
 
                     <Form layout='inline'>
                         <Form.Item>
-                            <Input.Search
+                            <Input.Search size="large"
                                 prefix={< Icon type = "book" />}
                                 onSearch={this.onSubmit}
                                 placeholder="Search Book Name"
                                 enterButton
+                                loading={this.state.isLoading}
                                 onChange={this.onChange}
                                 name="inputBookName"></Input.Search>
                         </Form.Item>
