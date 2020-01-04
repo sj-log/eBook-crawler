@@ -1,4 +1,5 @@
 module.exports = {
+    
     yesCrawler: async function (page, inputBookName) {
       
         await page.goto(`http://m.yes24.com/BookClub/Search?keyword=${inputBookName}`);

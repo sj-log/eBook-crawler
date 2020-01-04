@@ -191,6 +191,7 @@ export default class App extends React.Component {
                                 onSearch={this.onSubmit}
                                 placeholder="Search Book Name"
                                 enterButton
+                                required
                                 loading={this.state.isLoading}
                                 onChange={this.onChange}
                                 name="inputBookName"></Input.Search>

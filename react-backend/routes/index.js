@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const millieCrawler = require('../crawler/millie');
+const cralwer = require('../crawler/millie');
 const ridiCrawler = require('../crawler/ridi');
 const yesCrawler = require('../crawler/yes');
 const {Cluster} = require('puppeteer-cluster');
@@ -29,9 +29,9 @@ router.get('/search', (req, res) => {
 
         const crawling = async({page, data: inputBookName}) => {
 
-            const millieResult = await millieCrawler.millieCrawler(page, inputBookName);
-            const ridiResult = await ridiCrawler.ridiCrawler(page, inputBookName);
-            const yesResult = await yesCrawler.yesCrawler(page, inputBookName);
+            const millieResult = await cralwer.millieCrawler(page, inputBookName);
+            const ridiResult = await cralwer.ridiCrawler(page, inputBookName);
+            const yesResult = await cralwer.yesCrawler(page, inputBookName);
 
             res.json({ridiBooks: ridiResult, millieBooks: millieResult, yesBooks: yesResult});
         };
