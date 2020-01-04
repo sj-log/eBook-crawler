@@ -1,11 +1,8 @@
-
 module.exports = {
     millieCrawler: async function (page, inputBookName) {
-     
 
-        await page.goto(`https://www.millie.co.kr/v3/search/result/${inputBookName}?toapp=stop&type=all&category=1`,{waitUntil : 'networkidle2'});
-   
-     
+        await page.goto(`https://www.millie.co.kr/v3/search/result/${inputBookName}?toapp=stop&type=all&category=1`, {waitUntil: 'networkidle2'});
+
         //page is working but, evaluate function doesn't involved.
         const titleSelector = `#wrap > section > div > section.search-list > div > ul > li > a > div.body > span.title`;
         const titlesProc = await page.evaluate((titleSelector) => {
@@ -15,15 +12,13 @@ module.exports = {
                 .slice(0, 3);
 
             return returnTitles;
-        },titleSelector)
-
-
+        }, titleSelector)
 
         const writerProc = await page.evaluate(() => {
             var writers = Array.from(document.querySelectorAll("#wrap > section > div > section.search-list > div > ul > li> a > div.body > div " +
                     "> span"));
             var returnWriters = writers
-                .map(writer => writer.textContent.substr(0,15))
+                .map(writer => writer.textContent.substr(0, 15))
                 .slice(0, 3);
 
             return returnWriters;
@@ -46,7 +41,7 @@ module.exports = {
 
             return returnImgs;
         },)
- 
+
         // proc to put all info into an array
         console.log(`[Milie ] put into Array!`)
         const millieBookInfo = [];
@@ -58,7 +53,7 @@ module.exports = {
                 url: urlProc[i],
                 img: imgProc[i]
             }
-            
+
         }
 
         console.log(`[Millie] ${millieBookInfo}`);
@@ -67,10 +62,9 @@ module.exports = {
 
     },
     ridiCrawler: async function (page, inputBookName) {
-     
+
         await page.goto(`https://select.ridibooks.com/search?q=${inputBookName}&type=Books`);
 
-    
         const titleSelector = `#app > main > ul > li > div > div > a > h3`;
         const titlesProc = await page.evaluate((titleSelector) => {
             var titles = Array.from(document.querySelectorAll(titleSelector));
@@ -78,7 +72,6 @@ module.exports = {
             var resultTitleProc = titles
                 .map(title => title.textContent)
                 .slice(0, 3); // 3 > titles.length
-
 
             return resultTitleProc;
         }, titleSelector)
@@ -89,7 +82,6 @@ module.exports = {
                 .map(writer => writer.textContent)
                 .slice(0, 3);
 
-
             return writerProcResult;
         },)
 
@@ -99,10 +91,8 @@ module.exports = {
                 .map(publisher => publisher.textContent)
                 .slice(0, 3);
 
-
             return resultPublisherProc;
         },)
-
 
         const imgSelector = `#app > main > ul > li > div > div > div > a > div > img`;
         const imgProc = await page.evaluate((imgSelector) => {
@@ -132,10 +122,8 @@ module.exports = {
 
     },
     yesCrawler: async function (page, inputBookName) {
-      
-        await page.goto(`http://m.yes24.com/BookClub/Search?keyword=${inputBookName}`);
-        
 
+        await page.goto(`http://m.yes24.com/BookClub/Search?keyword=${inputBookName}`);
 
         const titleSelector = `#ulGoodsList > li > div > div > div > a`;
         const titlesProc = await page.evaluate((titleSelector) => {
