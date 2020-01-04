@@ -5,12 +5,13 @@ const ridiCrawler = require('../crawler/ridi');
 const yesCrawler = require('../crawler/yes');
 const {Cluster} = require('puppeteer-cluster');
 
-/* GET home page. */
+// index
 router.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + 'client/build/index.html'));
 
 });
 
+// submit
 router.get('/search', (req, res) => {
 
     (async() => {
@@ -19,28 +20,23 @@ router.get('/search', (req, res) => {
         const cluster = await Cluster.launch({
             concurrency: Cluster.CONCURRENCY_CONTEXT,
             maxConcurrency: 3,
+
             puppeteerOptions: {
-                headless: true
+                headless: true,
+                args: ['--no-sandbox', "--proxy-server='direct://'", '--proxy-bypass-list=*']
             }
         });
 
-        const millieCrawling = async({page, data: inputBookName}) => {
-            return await millieCrawler.millieCrawler(page, inputBookName);
+        const crawling = async({page, data: inputBookName}) => {
 
-        };
-        const ridiCrawling = async({page, data: inputBookName}) => {
-            return await ridiCrawler.ridiCrawler(page, inputBookName);
-        };
+            const millieResult = await millieCrawler.millieCrawler(page, inputBookName);
+            const ridiResult = await ridiCrawler.ridiCrawler(page, inputBookName);
+            const yesResult = await yesCrawler.yesCrawler(page, inputBookName);
 
-        const yesCrawling = async({page, data: inputBookName}) => {
-            return await yesCrawler.yesCrawler(page, inputBookName);
+            res.json({ridiBooks: ridiResult, millieBooks: millieResult, yesBooks: yesResult});
         };
 
-        const resultMillie = await cluster.execute(inputBookName, millieCrawling);
-        const resultRidi = await cluster.execute(inputBookName, ridiCrawling);
-        const resultYes = await cluster.execute(inputBookName, yesCrawling);
-
-        res.json({ridiBooks: resultRidi, millieBooks: resultMillie, yesBooks: resultYes});
+        cluster.execute(inputBookName, crawling);
 
         await cluster.idle();
         await cluster.close();
