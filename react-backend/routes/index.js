@@ -7,7 +7,7 @@ const {Cluster} = require('puppeteer-cluster');
 
 /* GET home page. */
 router.get('/', function (req, res) {
-    res.send('Home page opened up!');
+    res.sendFile(path.join(__dirname + 'client/build/index.html'));
 
 });
 
