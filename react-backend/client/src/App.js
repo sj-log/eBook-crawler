@@ -39,7 +39,7 @@ export default class App extends React.Component {
             ridiBooks: [],
             millieBooks: [],
             yesBooks: [],
-            isLoading: false
+            isLoading: false,
         }
 
     }

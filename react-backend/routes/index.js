@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const cralwer = require('../crawler/millie');
-const ridiCrawler = require('../crawler/ridi');
-const yesCrawler = require('../crawler/yes');
 const {Cluster} = require('puppeteer-cluster');
 
 // index

@@ -1,1 +1,21 @@
 @import '~antd/dist/antd.css';
+.ant-card-grid >img{
+    max-width:250px;
+}
+@media (max-width:580px){
+    .ant-card-grid{
+        width:100%;
+    }
+}
+@media (min-width:580px) and (max-width:767px){
+
+    .ant-card-grid{
+        width:50%;
+    }
+}
+
+@media (min-width:768px){
+    .ant-card-grid{
+        width:33%;
+    }
+}
