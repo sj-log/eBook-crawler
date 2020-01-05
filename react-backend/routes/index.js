@@ -6,10 +6,10 @@ const chromium = require('chrome-aws-lambda');
 const functions = require('firebase-functions');
 const puppetExtra = require('puppeteer-extra');
 const adblockerPlugin = require('puppeteer-extra-plugin-adblocker');
-
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 
 puppetExtra.use(adblockerPlugin({blockerTrackers: true, useCache:true})); // this makes ridi books come out
-
+puppetExtra.use(StealthPlugin()); // preventing to be traced.
 const options = {
     memory: '1GB',
     timeoutSeconds: 300
@@ -22,6 +22,7 @@ router.get('/', function (req, res) {
 
 // submit
 router.get('/search', (req, res) => {
+req.setEncoding('utf8');
 
     functions
         .runWith(options)
