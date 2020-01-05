@@ -1,6 +1,8 @@
 module.exports = {
     millieCrawler: async function (page, inputBookName) {
-
+        const metrics = await page.metrics();
+        console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
+        console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
         await page.goto(`https://www.millie.co.kr/v3/search/result/${inputBookName}?toapp=stop&type=all&category=1`, {waitUntil: 'networkidle2'});
 
         //page is working but, evaluate function doesn't involved.
@@ -67,7 +69,9 @@ module.exports = {
                 console.log(`${i}: ${msg._args[i]}`);
             }
         );
-
+        const metrics = await page.metrics();
+        console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
+        console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
         await page.goto(`https://select.ridibooks.com/search?q=${inputBookName}&type=Books`);
 
         const titleSelector = `#app > main > ul > li > div > div > a > h3`;
@@ -147,7 +151,9 @@ module.exports = {
 
     },
     yesCrawler: async function (page, inputBookName) {
-
+        const metrics = await page.metrics();
+        console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
+        console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
         await page.goto(`http://m.yes24.com/BookClub/Search?keyword=${inputBookName}`);
 
         const titleSelector = `#ulGoodsList > li > div > div > div > a`;

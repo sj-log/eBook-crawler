@@ -62,7 +62,9 @@ req.setEncoding('utf8');
             });
 
             const crawling = async({page, data: inputBookName}) => {
-               
+               const metrics = await page.metrics();
+               console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
+               console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
                 // await page.setRequestInterception(true);
                 // page.on('request', (request) => {
                 //     if (['stylesheet', 'font'].indexOf(request.resourceType()) !== -1) {
