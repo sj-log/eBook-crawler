@@ -2,7 +2,18 @@ var express = require('express');
 var router = express.Router();
 const crawlers = require('../crawler/crawlers');
 const {Cluster} = require('puppeteer-cluster');
+const chromium = require('chrome-aws-lambda');
+const functions = require('firebase-functions');
+const puppetExtra = require('puppeteer-extra');
+const adblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
+
+puppetExtra.use(adblockerPlugin({blockerTrackers: true, useCache:true})); // this makes ridi books come out
+
+const options = {
+    memory: '1GB',
+    timeoutSeconds: 300
+}
 // index
 router.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + 'client/build/index.html'));
@@ -12,34 +23,67 @@ router.get('/', function (req, res) {
 // submit
 router.get('/search', (req, res) => {
 
-    (async() => {
-        const inputBookName = req.query.inputBookName;
+    functions
+        .runWith(options)
+        .https
+        .onRequest(async() => {
 
-        const cluster = await Cluster.launch({
-            concurrency: Cluster.CONCURRENCY_CONTEXT,
-            maxConcurrency: 3,
+            const inputBookName = req.query.inputBookName;
 
-            puppeteerOptions: {
-                headless: true,
-                args: ['--no-sandbox', "--proxy-server='direct://'", '--proxy-bypass-list=*']
-            }
-        });
+            const cluster = await Cluster.launch({
+                puppeteer: puppetExtra.addExtra(chromium.puppeteer),
+                concurrency: Cluster.CONCURRENCY_PAGE,
+                maxConcurrency: 3,
 
-        const crawling = async({page, data: inputBookName}) => {
+                puppeteerOptions: {
 
-            const millieResult = await crawlers.millieCrawler(page, inputBookName);
-            const ridiResult = await crawlers.ridiCrawler(page, inputBookName);
-            const yesResult = await crawlers.yesCrawler(page, inputBookName);
+                    args: [
+                        ...chromium.args,
+                        '--no-sandbox',
+                        '--disable-web-security',
+                        '--disable-dev-profile',
+                        '--font-render-hinting=none',
+                        '--enable-font-antialiasing',
+                        "--proxy-server='direct://'",
+                        '--proxy-bypass-list=*',
+                        '--no-first-run',
+                        '--disable-gpu',
+                        '--disable-setuid-sandbox',
+                        '--no-zygote',
+                    ],
+                    ignoreHTTPSErrors: true,
+                
+                    defaultViewport: chromium.defaultViewport,
+                    executablePath: await chromium.executablePath,
+                    headless: true,
+                    userDataDir: '/dev/null'
+                }
+            });
 
-            res.json({ridiBooks: ridiResult, millieBooks: millieResult, yesBooks: yesResult});
-        };
+            const crawling = async({page, data: inputBookName}) => {
+               
+                // await page.setRequestInterception(true);
+                // page.on('request', (request) => {
+                //     if (['stylesheet', 'font'].indexOf(request.resourceType()) !== -1) {
+                //         request.abort();
+                //     } else {
+                //         request.continue();
+                //     }
+                // });
 
-        cluster.execute(inputBookName, crawling);
+                const millieResult = await crawlers.millieCrawler(page, inputBookName);
+                const ridiResult = await crawlers.ridiCrawler(page, inputBookName);
+                const yesResult = await crawlers.yesCrawler(page, inputBookName);
 
-        await cluster.idle();
-        await cluster.close();
+                res.json({ridiBooks: ridiResult, millieBooks: millieResult, yesBooks: yesResult});
+            };
 
-    })(req, res)
+            cluster.execute(inputBookName, crawling);
+
+            await cluster.idle();
+            await cluster.close();
+
+        })(req, res)
 
 })
 

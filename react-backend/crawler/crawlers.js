@@ -9,7 +9,7 @@ module.exports = {
             var titles = Array.from(document.querySelectorAll(titleSelector));
             var returnTitles = titles
                 .map(title => title.textContent)
-                .slice(0, 3);
+                .slice(0, 9);
 
             return returnTitles;
         }, titleSelector)
@@ -19,7 +19,7 @@ module.exports = {
                     "> span"));
             var returnWriters = writers
                 .map(writer => writer.textContent.substr(0, 15))
-                .slice(0, 3);
+                .slice(0, 9);
 
             return returnWriters;
         },)
@@ -28,7 +28,7 @@ module.exports = {
             var urls = Array.from(document.querySelectorAll(`#wrap > section > div > section.search-list > div > ul > li > a`));
             var returnUrls = urls
                 .map(url => url.href)
-                .slice(0, urls.length);
+                .slice(0, 9);
 
             return returnUrls;
         },)
@@ -37,7 +37,7 @@ module.exports = {
             var imgs = Array.from(document.querySelectorAll(`#wrap > section > div > section.search-list > div > ul > li > a > div.image.book-icon > div > img`));
             var returnImgs = imgs
                 .map(img => img.src)
-                .slice(0, 3);
+                .slice(0, 9);
 
             return returnImgs;
         },)
@@ -63,9 +63,10 @@ module.exports = {
     },
     ridiCrawler: async function (page, inputBookName) {
         page.on('console', msg => {
-            for (let i = 0; i < msg._args.length; ++i)
+            for (let i = 0; i < msg._args.length; ++i) 
                 console.log(`${i}: ${msg._args[i]}`);
-            });
+            }
+        );
 
         await page.goto(`https://select.ridibooks.com/search?q=${inputBookName}&type=Books`);
 
@@ -75,7 +76,7 @@ module.exports = {
 
             var resultTitleProc = titles
                 .map(title => title.textContent)
-                .slice(0, 3); // 3 > titles.length
+                .slice(0, 9); // 3 > 9
 
             console.log(`[resultTitleProc]${resultTitleProc}`);
             return resultTitleProc;
@@ -85,7 +86,7 @@ module.exports = {
             var writers = Array.from(document.querySelectorAll(`#app > main > ul > li > div > div > a > span.SearchResultBookList_Authors`));
             var writerProcResult = writers
                 .map(writer => writer.textContent)
-                .slice(0, 3);
+                .slice(0, 9);
 
             console.log(`[writerProcResult] ${writerProcResult}`)
 
@@ -96,18 +97,33 @@ module.exports = {
             var publishers = Array.from(document.querySelectorAll(`#app > main > ul > li > div > div > a > span.SearchResultBookList_Publisher`));
             var resultPublisherProc = publishers
                 .map(publisher => publisher.textContent)
-                .slice(0, 3);
+                .slice(0, 9);
             console.log(`[resultPublisherProc] ${resultPublisherProc}`);
 
             return resultPublisherProc;
         },)
 
         const imgSelector = `#app > main > ul > li > div > div > div > a > div > img`;
-        const imgProc = await page.evaluate((imgSelector) => {
+        const imgProc = await page.evaluate(async(imgSelector) => {
+            await new Promise((resolve, reject) => {
+                var totalHeight = 0;
+                var distance = 100;
+                var timer = setInterval(() => {
+                    var scrollHeight = document.body.scrollHeight;
+                    window.scrollBy(0, distance);
+                    totalHeight += distance;
+
+                    if (totalHeight >= scrollHeight) {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, 35);
+            })
+
             var imgs = Array.from(document.querySelectorAll(imgSelector));
             var resultImgProc = imgs
                 .map(img => img.src)
-                .slice(0, 3);
+                .slice(0, 9);
             console.log(`[resultImgProc] ${resultImgProc}`);
 
             return resultImgProc;
@@ -139,7 +155,7 @@ module.exports = {
             var titles = Array.from(document.querySelectorAll(titleSelector));
             var returnTitles = titles
                 .map(title => title.textContent)
-                .slice(0, 3);
+                .slice(0, 9);
 
             return returnTitles;
         }, titleSelector)
@@ -148,7 +164,7 @@ module.exports = {
             var urls = Array.from(document.querySelectorAll(`#ulGoodsList > li > div > p > span > a`));
             var returnUrls = urls
                 .map(url => url.href)
-                .slice(0, 3);
+                .slice(0, 9);
 
             return returnUrls;
         },)
@@ -157,7 +173,7 @@ module.exports = {
             var imgs = Array.from(document.querySelectorAll(`#ulGoodsList > li > div > p > span > a > img`));
             var returnImgs = imgs
                 .map(img => img.src)
-                .slice(0, 3);
+                .slice(0, 9);
 
             return returnImgs;
         },)

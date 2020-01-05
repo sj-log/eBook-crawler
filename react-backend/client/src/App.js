@@ -59,7 +59,7 @@ export default class App extends React.Component {
             sccssMsgNeed: true
         }
         
-        message.config({duration: 2.5, maxCount: 3});
+        message.config({duration: 4, maxCount: 3});
 
     }
     onChange(e) {
@@ -73,7 +73,7 @@ export default class App extends React.Component {
 
         await axios
             .get(`/search?inputBookName=${inputBookName}`)
-            .then(res => res.data, this.setState({isLoading: true}), this.setState({didResearch: true, sccssMsgNeed: true}))
+            .then(res => res.data, this.setState({isLoading: true, didResearch: true, sccssMsgNeed: true}))
             .then(books => this.setState({isLoading: false, ridiBooks: books.ridiBooks, millieBooks: books.millieBooks, yesBooks: books.yesBooks}));
 
         console.log(this.state);
@@ -128,7 +128,7 @@ export default class App extends React.Component {
                 </Tabs.TabPane>
             )
         } else if (didResearch == true && millieBooks.length == 0) {
-            message.info("밀리의 서재에 책이 없네요. 😪")
+            message.warning("밀리의 서재에 책이 없네요. 😪")
         }
     }
     showRidiBooks() {
@@ -177,7 +177,7 @@ export default class App extends React.Component {
             )
 
         } else if (didResearch == true && ridiBooks.length == 0) {
-            message.info("리디셀렉트에 책이 없네요. 🙄")
+            message.warning("리디셀렉트에 책이 없네요. 🙄")
         }
     }
     showYesBooks() {
@@ -224,7 +224,7 @@ export default class App extends React.Component {
                 </Tabs.TabPane>
             )
         } else if (didResearch === true && yesBooks.length === 0) {
-            message.info("예스24 북클럽, 책을 찾을 수 없습니다. 🙄")
+            message.warning("예스24 북클럽, 책을 찾을 수 없습니다. 🙄")
         }
 
     }
