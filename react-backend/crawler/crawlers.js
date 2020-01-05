@@ -62,6 +62,10 @@ module.exports = {
 
     },
     ridiCrawler: async function (page, inputBookName) {
+        page.on('console', msg => {
+            for (let i = 0; i < msg._args.length; ++i)
+                console.log(`${i}: ${msg._args[i]}`);
+            });
 
         await page.goto(`https://select.ridibooks.com/search?q=${inputBookName}&type=Books`);
 
@@ -73,6 +77,7 @@ module.exports = {
                 .map(title => title.textContent)
                 .slice(0, 3); // 3 > titles.length
 
+            console.log(`[resultTitleProc]${resultTitleProc}`);
             return resultTitleProc;
         }, titleSelector)
 
@@ -82,6 +87,8 @@ module.exports = {
                 .map(writer => writer.textContent)
                 .slice(0, 3);
 
+            console.log(`[writerProcResult] ${writerProcResult}`)
+
             return writerProcResult;
         },)
 
@@ -90,6 +97,7 @@ module.exports = {
             var resultPublisherProc = publishers
                 .map(publisher => publisher.textContent)
                 .slice(0, 3);
+            console.log(`[resultPublisherProc] ${resultPublisherProc}`);
 
             return resultPublisherProc;
         },)
@@ -100,6 +108,7 @@ module.exports = {
             var resultImgProc = imgs
                 .map(img => img.src)
                 .slice(0, 3);
+            console.log(`[resultImgProc] ${resultImgProc}`);
 
             return resultImgProc;
         }, imgSelector);
@@ -117,7 +126,7 @@ module.exports = {
             }
 
         }
-
+        console.log(`[ridiBookInfo] ${ridiBookInfo}`);
         return ridiBookInfo
 
     },
@@ -154,7 +163,6 @@ module.exports = {
         },)
 
         // proc to put all info into an array
-        console.log(`[YES ] put into Array!`)
         const yesBookInfo = [];
         for (var i = 0; i < titlesProc.length; i++) {
 

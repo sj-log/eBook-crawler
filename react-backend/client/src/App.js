@@ -2,12 +2,14 @@ import React from 'react';
 import axios from 'axios';
 import './App.css';
 import {
+    Spin,
     Layout,
     Tabs,
     Card,
     Form,
     Icon,
     Input,
+    message,
     PageHeader
 } from 'antd';
 
@@ -34,28 +36,44 @@ export default class App extends React.Component {
         this.showYesBooks = this
             .showYesBooks
             .bind(this);
+
+        this.showSearchPart = this
+            .showSearchPart
+            .bind(this);
+
+        this.showLoadingIcon = this
+            .showLoadingIcon
+            .bind(this);
+
+        this.showBooksResult = this
+            .showBooksResult
+            .bind(this);
+
         this.state = {
             inputBookName: '',
             ridiBooks: [],
             millieBooks: [],
             yesBooks: [],
             isLoading: false,
+            didResearch: Boolean,
+            sccssMsgNeed: true
         }
+        
+        message.config({duration: 2.5, maxCount: 3});
 
     }
     onChange(e) {
         e.preventDefault();
-        this.setState({inputBookName: e.target.value});
+        this.setState({inputBookName: e.target.value, didResearch: false, sccssMsgNeed: false});
         console.log(this.state);
     }
-
     async onSubmit() {
         const {inputBookName} = this.state;
         console.log(inputBookName);
 
         await axios
             .get(`/search?inputBookName=${inputBookName}`)
-            .then(res => res.data, this.setState({isLoading: true}))
+            .then(res => res.data, this.setState({isLoading: true}), this.setState({didResearch: true, sccssMsgNeed: true}))
             .then(books => this.setState({isLoading: false, ridiBooks: books.ridiBooks, millieBooks: books.millieBooks, yesBooks: books.yesBooks}));
 
         console.log(this.state);
@@ -63,171 +81,219 @@ export default class App extends React.Component {
     }
 
     showMilliBooks() {
-        const {millieBooks} = this.state;
+        const {millieBooks, didResearch, sccssMsgNeed} = this.state;
 
         if (millieBooks.length > 0) {
+            if (sccssMsgNeed) {
+                message.success('밀리의 서재에서 책을 찾았습니다!');
+            }
 
             return (
-                <Layout.Content>
-                    <PageHeader
-                        title="밀리의 서재"
-                        subTitle={millieBooks.length + "권"}
-                        style={{
-                        backgroundColor: "#ffffff"
-                    }}></PageHeader>
-                    <Card type="flex">
-                        {millieBooks.map((book, i) => <a key={i} className="millie_book_link" href={book.url}>
 
-                            <Card.Grid >
-                                <img
-                                    alt={`thumbnail ${book.title}`}
-                                    style={{
-                                    height: "20rem",
-                                    padding: "1rem"
-                                }}
-                                    src={book.img}
-                                    className="millie_book_img"/>
-                                <Card.Meta title={book.title} description={book.writer}/>
+                <Tabs.TabPane
+                    key="1"
+                    tab={< img alt = {
+                    `icon-millie`
+                }
+                style = {{ width: 25, borderRadius: 5 }}src = "https://www.millie.co.kr/favicon/ios-icon.png" />}>
 
-                            </Card.Grid>
-                        </a>)
+                    <Layout.Content>
+
+                        <PageHeader
+                            title="밀리의 서재"
+                            subTitle={millieBooks.length + "권"}
+                            style={{
+                            backgroundColor: "#ffffff"
+                        }}/>
+
+                        <Card type="flex">
+                            {millieBooks.map((book, i) => <a key={i} className="millie_book_link" href={book.url}>
+
+                                <Card.Grid >
+                                    <img
+                                        alt={`thumbnail ${book.title}`}
+                                        style={{
+                                        height: "20rem",
+                                        padding: "1rem"
+                                    }}
+                                        src={book.img}
+                                        className="millie_book_img"/>
+                                    <Card.Meta title={book.title} description={book.writer}/>
+
+                                </Card.Grid>
+                            </a>)
 }
-                    </Card>
-                </Layout.Content>
+                        </Card>
+                    </Layout.Content>
+                </Tabs.TabPane>
             )
+        } else if (didResearch == true && millieBooks.length == 0) {
+            message.info("밀리의 서재에 책이 없네요. 😪")
         }
     }
     showRidiBooks() {
-        const {ridiBooks} = this.state;
+        const {ridiBooks, didResearch, sccssMsgNeed} = this.state;
 
         if (ridiBooks.length > 0) {
+            if (sccssMsgNeed) {
+                message.success('리디셀렉트에서 책을 찾았습니다!');
+            }
 
             return (
-                <Layout.Content>
-                    <PageHeader
-                        title="리디북스"
-                        subTitle={ridiBooks.length + "권"}
-                        style={{
-                        backgroundColor: "#ffffff"
-                    }}></PageHeader>
-                    <Card type="flex">
-                        {ridiBooks.map((book, i) => <a key={i} className="ridi_book_link" href={book.url}>
+                <Tabs.TabPane
+                    key="2"
+                    tab={< img alt = {
+                    `icon-ridiBook`
+                }
+                style = {{ width: 25, borderRadius: 5 }}src = "https://books.ridicdn.net/static/favicon/favicon.ico" />}>
 
-                            <Card.Grid >
-                                <img
-                                    alt={`thumbnail ${book.title}`}
-                                    style={{
-                                    height: "20rem",
-                                    padding: "1rem"
-                                }}
-                                    src={book.img}
-                                    className="ridi_book_img"/>
-                                <Card.Meta title={book.title} description={book.writer}/>
+                    <Layout.Content>
+                        <PageHeader
+                            title="리디북스"
+                            subTitle={ridiBooks.length + "권"}
+                            style={{
+                            backgroundColor: "#ffffff"
+                        }}></PageHeader>
+                        <Card type="flex">
+                            {ridiBooks.map((book, i) => <a key={i} className="ridi_book_link" href={book.url}>
 
-                            </Card.Grid>
-                        </a>)
+                                <Card.Grid >
+                                    <img
+                                        alt={`thumbnail ${book.title}`}
+                                        style={{
+                                        height: "20rem",
+                                        padding: "1rem"
+                                    }}
+                                        src={book.img}
+                                        className="ridi_book_img"/>
+                                    <Card.Meta title={book.title} description={book.writer}/>
+
+                                </Card.Grid>
+                            </a>)
 }
-                    </Card>
-                </Layout.Content>
+                        </Card>
+                    </Layout.Content>
+                </Tabs.TabPane>
             )
-        }
 
+        } else if (didResearch == true && ridiBooks.length == 0) {
+            message.info("리디셀렉트에 책이 없네요. 🙄")
+        }
     }
     showYesBooks() {
-        const {yesBooks} = this.state;
+        const {yesBooks, didResearch, sccssMsgNeed} = this.state;
 
         if (yesBooks.length > 0) {
-
+            if (sccssMsgNeed) {
+                message.success('예스24 북클럽에서 책을 찾았습니다!');
+            }
             return (
-                <Layout.Content>
-                    <PageHeader
-                        title="예스24북클럽"
-                        subTitle={yesBooks.length + "권"}
-                        style={{
-                        backgroundColor: "#ffffff"
-                    }}></PageHeader>
-                    <Card type="flex">
-                        {yesBooks.map((book, i) => <a key={i} className="yes_book_link" href={book.url}>
+                <Tabs.TabPane
+                    key="3"
+                    tab={< img alt = {
+                    `icon-yesBookClub-24`
+                }
+                style = {{ width: 25, borderRadius: 5 }}src = "https://secimage.yes24.com/sysimage/renew/gnb/yes24.ico" />}>
 
-                            <Card.Grid >
-                                <img
-                                    alt={`thumbnail ${book.title}`}
-                                    style={{
-                                    height: "20rem",
-                                    padding: "1rem"
-                                }}
-                                    src={book.img}
-                                    className="yes_book_img"/>
-                                <Card.Meta title={book.title} description={book.writer}/>
+                    <Layout.Content>
+                        <PageHeader
+                            title="예스24북클럽"
+                            subTitle={yesBooks.length + "권"}
+                            style={{
+                            backgroundColor: "#ffffff"
+                        }}></PageHeader>
+                        <Card type="flex">
+                            {yesBooks.map((book, i) => <a key={i} className="yes_book_link" href={book.url}>
 
-                            </Card.Grid>
-                        </a>)
+                                <Card.Grid >
+                                    <img
+                                        alt={`thumbnail ${book.title}`}
+                                        style={{
+                                        height: "20rem",
+                                        padding: "1rem"
+                                    }}
+                                        src={book.img}
+                                        className="yes_book_img"/>
+                                    <Card.Meta title={book.title} description={book.writer}/>
+
+                                </Card.Grid>
+                            </a>)
 }
-                    </Card>
-                </Layout.Content>
+                        </Card>
+                    </Layout.Content>
+                </Tabs.TabPane>
+            )
+        } else if (didResearch === true && yesBooks.length === 0) {
+            message.info("예스24 북클럽, 책을 찾을 수 없습니다. 🙄")
+        }
+
+    }
+    showSearchPart() {
+        return (
+            <PageHeader
+                title="eBook Crawler"
+                subTitle="내가 찾는 e북 어디에 있을까?"
+                style={{
+                border: '1px solid rgb(235, 237, 240)'
+            }}>
+
+                <Form layout='inline'>
+                    <Form.Item>
+                        <Input.Search
+                            size="large"
+                            prefix={< Icon type = "book" />}
+                            onSearch={this.onSubmit}
+                            placeholder="무슨 책을 찾고 있나요?"
+                            required
+                            onChange={this.onChange}
+                            name="inputBookName"></Input.Search>
+                    </Form.Item>
+
+                </Form>
+            </PageHeader>
+        )
+    }
+    showLoadingIcon() {
+        return (<Spin
+            size={"large"}
+            style={{
+            fontSize: "72px",
+            top: "40%",
+            position: "fixed",
+            left: "50%",
+            translate: "-50% -50%"
+        }}/>)
+    }
+    showBooksResult() {
+        const {isLoading} = this.state;
+        if (isLoading) {
+            return (this.showLoadingIcon())
+        } else {
+            return (
+                <Tabs>
+                    {this.showMilliBooks()}
+                    {this.showRidiBooks()}
+                    {this.showYesBooks()}
+                </Tabs>
             )
         }
+
     }
+
     render() {
 
         return (
-            <Layout
-                style={{
-                textAlign: 'center',
-                backgroundColor: "#FFFFFF"
-            }}className="App">
-
-                <PageHeader
-                    title="eBook Crawler"
-                    subTitle="You can search All eBook in South Korea below."
+         
+                <Layout
                     style={{
-                    border: '1px solid rgb(235, 237, 240)'
-                }}>
+                    textAlign: 'center',
+                    backgroundColor: "#FFFFFF"
+                }}className="App">
 
-                    <Form layout='inline'>
-                        <Form.Item>
-                            <Input.Search size="large"
-                                prefix={< Icon type = "book" />}
-                                onSearch={this.onSubmit}
-                                placeholder="Search Book Name"
-                                enterButton
-                                required
-                                loading={this.state.isLoading}
-                                onChange={this.onChange}
-                                name="inputBookName"></Input.Search>
-                        </Form.Item>
-
-                    </Form>
-                </PageHeader>
-
-                <Tabs defaultActiveKey="1">
-                    <Tabs.TabPane
-                        key="1"
-                        tab={< img alt = {
-                        `icon-millie`
-                    }
-                    style = {{ width: 25, borderRadius: 5 }}src = "https://www.millie.co.kr/favicon/ios-icon.png" />}>
-                        {this.showMilliBooks()}
-                    </Tabs.TabPane>
-                    <Tabs.TabPane
-                        key="2"
-                        tab={< img alt = {
-                        `icon-ridiBook`
-                    }
-                    style = {{ width: 25, borderRadius: 5 }}src = "https://books.ridicdn.net/static/favicon/favicon.ico" />}>
-                        {this.showRidiBooks()}
-                    </Tabs.TabPane>
-                    <Tabs.TabPane
-                        key="3"
-                        tab={< img alt = {
-                        `icon-yesBookClub-24`
-                    }
-                    style = {{ width: 25, borderRadius: 5 }}src = "https://secimage.yes24.com/sysimage/renew/gnb/yes24.ico" />}>
-                        {this.showYesBooks()}
-                    </Tabs.TabPane>
-                </Tabs>
-
-            </Layout>
+                    {this.showSearchPart()}
+                    {this.showBooksResult()}
+                </Layout>
+        
         );
     }
 

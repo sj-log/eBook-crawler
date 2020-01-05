@@ -1,4 +1,7 @@
 @import '~antd/dist/antd.css';
+.ant-message-notice{
+    text-align: right;
+}
 .ant-card-grid >img{
     max-width:250px;
 }
@@ -7,14 +10,14 @@
         width:100%;
     }
 }
-@media (min-width:580px) and (max-width:767px){
+@media (min-width:580px) and (max-width:900px){
 
     .ant-card-grid{
         width:50%;
     }
 }
 
-@media (min-width:768px){
+@media (min-width:900px){
     .ant-card-grid{
         width:33%;
     }
