@@ -12,6 +12,7 @@ import {
     message,
     PageHeader
 } from 'antd';
+import GoogleTagManager from './GTM';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -58,7 +59,7 @@ export default class App extends React.Component {
             didResearch: Boolean,
             sccssMsgNeed: true
         }
-        
+
         message.config({duration: 4, maxCount: 3});
 
     }
@@ -283,17 +284,18 @@ export default class App extends React.Component {
     render() {
 
         return (
-         
-                <Layout
-                    style={{
-                    textAlign: 'center',
-                    backgroundColor: "#FFFFFF"
-                }}className="App">
 
-                    {this.showSearchPart()}
-                    {this.showBooksResult()}
-                </Layout>
-        
+            <Layout
+                style={{
+                textAlign: 'center',
+                backgroundColor: "#FFFFFF"
+            }}className="App">
+
+                {this.showSearchPart()}
+                {this.showBooksResult()}
+                <GoogleTagManager gtmId='GTM-PPBS6FW' scriptId='gtm-script-container'/>
+            </Layout>
+
         );
     }
 
