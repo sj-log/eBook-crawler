@@ -7,6 +7,8 @@ export default class helmet extends React.Component {
             <React.Fragment>
                 <Helmet>
                     <meta charSet="utf-8"/>
+                    <meta http-equiv="Content-Security-Policy" content="font-src 'self' "/>
+
                     <title>eBook Crawler KOR</title>
                     <link rel="canonical" href="https://eBook-crawler.herokuapp.com"/>
                     <meta property="og:title" content="eBook Crawler KOR"/>

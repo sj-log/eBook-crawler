@@ -60,13 +60,12 @@ export default class App extends React.Component {
             sccssMsgNeed: true
         }
 
-        message.config({duration: 4, maxCount: 3});
+        message.config({duration: 4, maxCount: 3, top:"70%"});
 
     }
     onChange(e) {
         e.preventDefault();
         this.setState({inputBookName: e.target.value, didResearch: false, sccssMsgNeed: false});
-        console.log(this.state);
     }
     async onSubmit() {
         const {inputBookName} = this.state;
@@ -255,18 +254,8 @@ export default class App extends React.Component {
         )
     }
     showLoadingIcon() {
-        const x= -50;
-        const y= - 50;
 
-        return (<Spin
-            size={"large"}
-            style={{
-            fontSize: "72px",
-            top: "50%",
-            position: "fixed",
-            left: "50%",
-            transform: `translate: ${x}% ${y}%`
-        }}/>)
+        return (<Spin size={"large"} className="loading-spin"/>)
     }
     showBooksResult() {
         const {isLoading} = this.state;
@@ -289,7 +278,7 @@ export default class App extends React.Component {
         return (
             <React.Fragment>
                 <Helmet/>
-                   
+
                 <Layout
                     style={{
                     textAlign: 'center',

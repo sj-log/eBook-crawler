@@ -1,12 +1,22 @@
 @import '~antd/dist/antd.css';
+.ant-page-header .ant-page-header-ghost{
+    border:none;
+}
 .ant-message-notice{
-    text-align: right;
+    text-align: center;
 }
 .ant-card-grid >img{
     max-width:250px;
 }
 .ant-page-header {
     border : none;
+}
+
+.loading-spin{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 @media (max-width:580px){
     .ant-card-grid{
