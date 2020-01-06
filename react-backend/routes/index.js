@@ -8,7 +8,7 @@ const puppetExtra = require('puppeteer-extra');
 const adblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 
-puppetExtra.use(adblockerPlugin({blockerTrackers: true, useCache:true})); // this makes ridi books come out
+puppetExtra.use(adblockerPlugin({blockerTrackers: true, useCache: true})); // this makes ridi books come out
 puppetExtra.use(StealthPlugin()); // preventing to be traced.
 const options = {
     memory: '1GB',
@@ -22,7 +22,7 @@ router.get('/', function (req, res) {
 
 // submit
 router.get('/search', (req, res) => {
-req.setEncoding('utf8');
+    req.setEncoding('utf8');
 
     functions
         .runWith(options)
@@ -37,23 +37,20 @@ req.setEncoding('utf8');
                 maxConcurrency: 3,
 
                 puppeteerOptions: {
-
+                    devtools: true,
                     args: [
                         ...chromium.args,
                         '--no-sandbox',
-                        '--disable-web-security',
-                        '--disable-dev-profile',
-                        '--font-render-hinting=none',
-                        '--enable-font-antialiasing',
+                        '--disable-multi-display-layout',
                         "--proxy-server='direct://'",
                         '--proxy-bypass-list=*',
                         '--no-first-run',
                         '--disable-gpu',
                         '--disable-setuid-sandbox',
-                        '--no-zygote',
+                        '--no-zygote'
                     ],
                     ignoreHTTPSErrors: true,
-                
+
                     defaultViewport: chromium.defaultViewport,
                     executablePath: await chromium.executablePath,
                     headless: true,
@@ -62,23 +59,31 @@ req.setEncoding('utf8');
             });
 
             const crawling = async({page, data: inputBookName}) => {
-               const metrics = await page.metrics();
-               console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
-               console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
-                // await page.setRequestInterception(true);
-                // page.on('request', (request) => {
-                //     if (['stylesheet', 'font'].indexOf(request.resourceType()) !== -1) {
-                //         request.abort();
-                //     } else {
-                //         request.continue();
-                //     }
-                // });
+                page.on('console', msg => {
+                    for (let i = 0; i < msg._args.length; ++i) 
+                        console.log(`${i}: ${msg._args[i]}`);
+                    }
+                );
+                console.log(`[REQ BOOK NAME] ${inputBookName}`)
+
+                await page
+                    .tracing
+                    .start({categories: ['devtools.timeline'], path: "./tracing.json"});
 
                 const millieResult = await crawlers.millieCrawler(page, inputBookName);
                 const ridiResult = await crawlers.ridiCrawler(page, inputBookName);
                 const yesResult = await crawlers.yesCrawler(page, inputBookName);
 
                 res.json({ridiBooks: ridiResult, millieBooks: millieResult, yesBooks: yesResult});
+
+                var tracing = JSON.parse(await page.tracing.stop());
+                tracing
+                    .traceEvents
+                    .filter(te => te.name === "ResourceSendRequest");
+                tracing
+                    .traceEvents
+                    .filter(te => te.name === "ResourceReceiveResponse");
+
             };
 
             cluster.execute(inputBookName, crawling);

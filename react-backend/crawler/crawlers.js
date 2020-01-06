@@ -1,12 +1,11 @@
 module.exports = {
     millieCrawler: async function (page, inputBookName) {
-        const metrics = await page.metrics();
-        console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
-        console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
+       
         await page.goto(`https://www.millie.co.kr/v3/search/result/${inputBookName}?toapp=stop&type=all&category=1`, {waitUntil: 'networkidle2'});
 
         //page is working but, evaluate function doesn't involved.
         const titleSelector = `#wrap > section > div > section.search-list > div > ul > li > a > div.body > span.title`;
+     
         const titlesProc = await page.evaluate((titleSelector) => {
             var titles = Array.from(document.querySelectorAll(titleSelector));
             var returnTitles = titles
@@ -64,15 +63,7 @@ module.exports = {
 
     },
     ridiCrawler: async function (page, inputBookName) {
-        page.on('console', msg => {
-            for (let i = 0; i < msg._args.length; ++i) 
-                console.log(`${i}: ${msg._args[i]}`);
-            }
-        );
-        const metrics = await page.metrics();
-        console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
-        console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
-        await page.goto(`https://select.ridibooks.com/search?q=${inputBookName}&type=Books`);
+    
 
         const titleSelector = `#app > main > ul > li > div > div > a > h3`;
         const titlesProc = await page.evaluate((titleSelector) => {
@@ -151,12 +142,12 @@ module.exports = {
 
     },
     yesCrawler: async function (page, inputBookName) {
-        const metrics = await page.metrics();
-        console.log(`[metrics.Timestamp] ${metrics.Timestamp}`);
-        console.log(`[metrics.TaskDuration] ${metrics.TaskDuration}`);
+    
         await page.goto(`http://m.yes24.com/BookClub/Search?keyword=${inputBookName}`);
 
         const titleSelector = `#ulGoodsList > li > div > div > div > a`;
+      
+      
         const titlesProc = await page.evaluate((titleSelector) => {
             var titles = Array.from(document.querySelectorAll(titleSelector));
             var returnTitles = titles

@@ -12,8 +12,6 @@ import {
     message,
     PageHeader
 } from 'antd';
-import GoogleTagManager from './GTM';
-
 export default class App extends React.Component {
     constructor(props) {
         super(props);
@@ -128,7 +126,7 @@ export default class App extends React.Component {
                     </Layout.Content>
                 </Tabs.TabPane>
             )
-        } else if (didResearch == true && millieBooks.length == 0) {
+        } else if (didResearch === true && millieBooks.length === 0) {
             message.warning("밀리의 서재에 책이 없네요. 😪")
         }
     }
@@ -177,7 +175,7 @@ export default class App extends React.Component {
                 </Tabs.TabPane>
             )
 
-        } else if (didResearch == true && ridiBooks.length == 0) {
+        } else if (didResearch === true && ridiBooks.length === 0) {
             message.warning("리디셀렉트에 책이 없네요. 🙄")
         }
     }
@@ -293,7 +291,6 @@ export default class App extends React.Component {
 
                 {this.showSearchPart()}
                 {this.showBooksResult()}
-                <GoogleTagManager gtmId='GTM-PPBS6FW' scriptId='gtm-script-container'/>
             </Layout>
 
         );
