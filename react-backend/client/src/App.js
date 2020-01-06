@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import './App.css';
+import Helmet from './helmet';
+
 import {
     Spin,
     Layout,
@@ -253,14 +255,17 @@ export default class App extends React.Component {
         )
     }
     showLoadingIcon() {
+        const x= -50;
+        const y= - 50;
+
         return (<Spin
             size={"large"}
             style={{
             fontSize: "72px",
-            top: "40%",
+            top: "50%",
             position: "fixed",
             left: "50%",
-            translate: "-50% -50%"
+            transform: `translate: ${x}% ${y}%`
         }}/>)
     }
     showBooksResult() {
@@ -282,16 +287,19 @@ export default class App extends React.Component {
     render() {
 
         return (
+            <React.Fragment>
+                <Helmet/>
+                   
+                <Layout
+                    style={{
+                    textAlign: 'center',
+                    backgroundColor: "#FFFFFF"
+                }}className="App">
 
-            <Layout
-                style={{
-                textAlign: 'center',
-                backgroundColor: "#FFFFFF"
-            }}className="App">
-
-                {this.showSearchPart()}
-                {this.showBooksResult()}
-            </Layout>
+                    {this.showSearchPart()}
+                    {this.showBooksResult()}
+                </Layout>
+            </React.Fragment>
 
         );
     }
