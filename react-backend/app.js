@@ -4,15 +4,19 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var engine = require('consolidate');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(express.static(path.join(__dirname + '/client/build')));
 // view engine setup
-console.log(path.join(__dirname, 'client/build'));
-app.set('views', path.join(__dirname, 'client/build'));
-app.set('view engine', 'index.html');
+console.log(path.join(__dirname + '/client/build'));
+app.set('views', path.join(__dirname + '/client/build'));
+app.engine('html', engine.react);
+app.set('view engine', 'html');
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -31,7 +35,6 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
-app.use(express.static(path.join(__dirname, 'client/build')));
 // error handler
 app.use(function (err, req, res, next) {
     // set locals, only providing error in development

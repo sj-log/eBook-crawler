@@ -118,7 +118,7 @@ export default class App extends React.Component {
                                     }}
                                         src={book.img}
                                         className="millie_book_img"/>
-                                    <Card.Meta title={book.title} description={book.writer}/>
+                                    <Card.Meta title={book.title} description={book.writer.substr(0,10)}/>
 
                                 </Card.Grid>
                             </a>)

@@ -16,7 +16,7 @@ const options = {
 }
 // index
 router.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + 'client/build/index.html'));
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
 
 });
 
@@ -33,8 +33,8 @@ router.get('/search', (req, res) => {
 
             const cluster = await Cluster.launch({
                 puppeteer: puppetExtra.addExtra(chromium.puppeteer),
-                concurrency: Cluster.CONCURRENCY_PAGE,
-                maxConcurrency: 3,
+                concurrency: Cluster.CONCURRENCY_BROWSER,
+                maxConcurrency: 1,
 
                 puppeteerOptions: {
                     devtools: true,
